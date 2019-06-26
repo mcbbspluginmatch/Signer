@@ -1,0 +1,8 @@
+name: Signer
+main: net.MayDayMemory.www.Main
+version: 1.0
+permission: 
+    Signer.admin: 
+        default: op
+    Signer.default: 
+        default: true
