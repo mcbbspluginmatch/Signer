@@ -11,12 +11,14 @@ import net.MayDayMemory.www.Main;
 import net.MayDayMemory.www.Signer.Calen;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class Signer extends Command{
 	public String permission = "Signer.admin";
@@ -35,6 +37,7 @@ public class Signer extends Command{
 			sender.sendMessage("/Signer commandslist  查看已添加的指令表");
 			sender.sendMessage("/Signer remove [想要移除的指令编号]  可以用commandslist查看指令编号。");
 			sender.sendMessage("/Signer setitem  将签到获得物品设置成你背包里已有的物品。");
+			sender.sendMessage("/Signer setsymbol [finished/unfinished/comming]  将手上物品设置为[完成/未完成/未来]的图标");
 			return true;
 		}
 		if(args[0].equals("reload")){
@@ -79,10 +82,12 @@ public class Signer extends Command{
 			return true;
 		}*/
 		
+		//repairing
 		if(args[0].equals("board")||args[0].equals("b")){
 			if(sender instanceof Player){
 				Player p = (Player) sender;
 				UUID puuid = p.getUniqueId();
+				Calendar calendar = Calendar.getInstance();
 				Calen c;
 				if(Main.instance.cmap.equals(puuid)){
 					c= Main.instance.cmap.get(puuid);
@@ -92,7 +97,6 @@ public class Signer extends Command{
 				}
 				int lasty = c.lasty;
 				int lastm = c.lastm;
-				Calendar calendar = Calendar.getInstance();
 				if(calendar.get(Calendar.YEAR)!=lasty){
 					c=new Calen(calendar);
 					Main.instance.cmap.put(puuid, c);
@@ -103,15 +107,32 @@ public class Signer extends Command{
 					Main.instance.cmap.put(puuid, c);
 					Main.instance.cser(p);
 				}
+				Configuration config = Main.instance.getConfig();
 				int month = Calendar.getInstance().get(Calendar.MONTH)+1;
 				Inventory i =Bukkit.createInventory(p,36,"§0§l"+month+"月签到簿");
-				for(int f = 0;f<c.sticky.length;f++){
-					i.setItem(f, new ItemStack(c.sticky[f],f+1));
+				for(int f = 0;f<c.state.length;f++){
+					ItemStack sticky = config.getItemStack("symbol."+c.state[f]+".mate");
+					sticky.setAmount(f+1);
+					ItemMeta newmeta =sticky.getItemMeta();
+					newmeta.setDisplayName(config.getString("symbol."+c.state[f]+".displayname").replaceAll("0day0",String.valueOf(f+1)));
+					sticky.setItemMeta(newmeta);
+					i.setItem(f,sticky);
 				}
 				for(int f2=0;f2<calendar.get(Calendar.DATE);f2++){
-					if(i.getItem(f2).equals(new ItemStack(Material.SNOW_BLOCK,f2+1))){ 
-						i.setItem(f2,new ItemStack(Material.ICE,f2+1));
-						c.sticky[f2]=Material.ICE;
+					ItemStack check =config.getItemStack("symbol.comming.mate");
+					ItemMeta newmeta2 =check.getItemMeta();
+					newmeta2.setDisplayName(config.getString("symbol.comming.displayname").replaceAll("0day0",String.valueOf(f2+1)));
+					check.setItemMeta(newmeta2);
+					check.setAmount(f2+1);
+					if(i.getItem(f2).equals(check)){ 
+						ItemStack set =config.getItemStack("symbol.unfinished.mate");
+						String setname =config.getString("symbol.unfinished.displayname").replaceAll("0day0",String.valueOf(f2+1));
+						set.setAmount(f2+1);
+						ItemMeta newmeta = set.getItemMeta();
+						newmeta.setDisplayName(setname);
+						set.setItemMeta(newmeta);
+						i.setItem(f2,set);
+						c.state[f2]="unfinished";
 						Main.instance.cser(p);
 					}
 				}
@@ -188,6 +209,42 @@ public class Signer extends Command{
 			}
 			return true;
 		}
+		
+		//repaired
+		if(args[0].equals("setsymbol")){
+			if(sender instanceof Player){
+				if(args.length<2){
+					sender.sendMessage("参数不足，请输入/Signer查看帮助");
+				}else{
+					Player p = (Player) sender;
+					ItemStack item = p.getItemInHand();
+					FileConfiguration config = Main.instance.getConfig();
+					item.setAmount(1);
+					if(args[1].equals("unfinished")){
+						config.set("symbol.unfinished.mate",item);
+					}else
+					if(args[1].equals("finished")){
+						config.set("symbol.finished.mate",item);
+					}else
+					if(args[1].equals("comming")){
+						config.set("symbol.comming.mate",item);
+					}else{
+						sender.sendMessage("您输入的参数不正确，请输入/Signer查看帮助");
+						return true;
+					}
+					Main.instance.saveConfig();
+					sender.sendMessage("设置成功");
+				}
+				return true;
+			}else{
+				sender.sendMessage("只有玩家可以执行这个指令！");
+				return true;
+			}
+		}
+		
+		if(args[0].equals("test")){
+			
+			}
 		
 		sender.sendMessage("您输入的指令不存在！请输入/Signer 查看。");
 		return true;
