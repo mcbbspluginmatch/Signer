@@ -1,4 +1,21 @@
-commands: 
-    - example
-    - example2
-items: 
+commands:
+- example
+- example2
+symbol:
+  unfinished:
+    displayname: 第0day0天 未签到
+    mate:
+      ==: org.bukkit.inventory.ItemStack
+      type: STAINED_GLASS_PANE
+      damage: 7
+  finished:
+    displayname: 第0day0天 已签到
+    mate:
+      ==: org.bukkit.inventory.ItemStack
+      type: STAINED_GLASS_PANE
+      damage: 14
+  comming:
+    displayname: 第0day0天 未签到
+    mate:
+      ==: org.bukkit.inventory.ItemStack
+      type: STAINED_GLASS_PANE
