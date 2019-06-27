@@ -77,7 +77,6 @@ public class Main extends JavaPlugin{
 		UUID puuid = p.getUniqueId();
 		String uuid = puuid.toString();
 		File directory = new File("");
-		Calen c = null;
 		try {
 			String path = directory.getCanonicalPath();
 			path +="\\Calens\\"+uuid+".ser";
@@ -88,7 +87,7 @@ public class Main extends JavaPlugin{
 			}
 			FileInputStream fileIn = new FileInputStream(path);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			c= (Calen) in.readObject();
+			Calen c= (Calen) in.readObject();
 	        in.close();
 	        fileIn.close();
 	        cmap.put(puuid, c);
@@ -99,6 +98,15 @@ public class Main extends JavaPlugin{
 	  }
 	  
 	  public void cser(Player p){
+		  	try {
+		  		File directory = new File("");
+		  		String path = directory.getCanonicalPath();
+		  		path +="\\Calens";
+		  		File file =new File(path);
+		  		if  (!file .exists()  && !file .isDirectory())  file .mkdir();
+		  	} catch (IOException e) {
+		  		e.printStackTrace();
+		  	}
 			UUID puuid = p.getUniqueId();
 			String uuid = puuid.toString();
 			File directory = new File("");
