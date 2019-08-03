@@ -39,7 +39,7 @@ public class Main extends JavaPlugin{
 			File directory = new File("");
 			String path = directory.getCanonicalPath();
 			path +="\\Calens";
-			File file =new File(path);
+			File file =new File(path); // new File("./Calens") —— 754503921
 			if  (!file .exists()  && !file .isDirectory())  file .mkdir();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -72,7 +72,8 @@ public class Main extends JavaPlugin{
 	  {
 	    return this.config;
 	  }
-	  
+
+	  // 迷惑命名 —— 754503921
 	  public void cunser(Player p){
 		UUID puuid = p.getUniqueId();
 		String uuid = puuid.toString();
