@@ -23,7 +23,7 @@ public class InventoryClick implements Listener{
 		List<HumanEntity> p = e.getViewers();
 		String title = i.getTitle();
 		int month = Calendar.getInstance().get(Calendar.MONTH)+1;
-		if (title.equals("§0§l"+month+"月签到簿")){ // 基于 title 的背包判定，建议更改为 InventoryView —— 754503921
+		if (title.equals("§0§l"+month+"月签到簿")){ // 基于 title 的背包判定，建议更改为 InventoryHolder —— 754503921
 			if(e.getSlot()+1==Calendar.getInstance().get(Calendar.DATE)){
 				int slot = e.getSlot();
 				ItemStack finished = Main.instance.getConfig().getItemStack("symbol.finished.mate");
